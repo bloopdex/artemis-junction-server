@@ -1,7 +1,9 @@
+import { HardwareMiddleware } from "./../middlewares/board.middleware";
 import { io } from "../server";
 import { Request, Response } from "express";
-import { Board, Pin, Relay } from "johnny-five";
+import { Pin, Relay } from "johnny-five";
 
+// TODO: Change This
 export const fireDetectionPost = async (req: Request, res: Response) => {
   // Get the frame data and detection score from the request body
   const { frameData, detectionScore } = req.body;
@@ -9,10 +11,8 @@ export const fireDetectionPost = async (req: Request, res: Response) => {
   // If the detection score is above a certain threshold, activate the water sprayers
   if (detectionScore > 0.8) {
     io.emit("fire-detected", { message: "Fire detected!", type: "error" });
-    // Code to activate the water sprayers
-    const board = new Board();
 
-    board.on("ready", () => {
+    HardwareMiddleware(() => {
       // Set up the pins connected to the relay module
       const relayPin = new Pin(10);
 
